@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="vi" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b0b0e" />
+    <title>Lyly Arcturus Tarot — Một khoảng lặng dành cho bạn</title>
+    <meta
+      name="description"
+      content="Lyly Arcturus Tarot — không gian Tarot dịu dàng để lắng nghe và chiêm nghiệm. Rút bài miễn phí, khám phá dịch vụ và đặt lịch trải bài cùng Lyly."
+    />
+
+    <!-- Open Graph / Social Share -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="vi_VN" />
+    <meta property="og:title" content="Lyly Arcturus Tarot — Một khoảng lặng dành cho bạn" />
+    <meta
+      property="og:description"
+      content="Một chút Tarot, một khoảng lặng dành cho bạn. Cùng Lyly lắng nghe những điều chưa nói và tìm thấy góc nhìn mới qua từng lá bài."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Prevent theme flash (FOUC) before first paint -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('lyly-arcturus-theme');
+          if (saved === 'light' || saved === 'dark') {
+            document.documentElement.setAttribute('data-theme', saved);
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <canvas id="celestialCanvas" aria-hidden="true"></canvas>
+
+    <header>
+      <nav class="nav container" aria-label="Điều hướng chính">
+        <a href="#home" class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M15.8 4.2a8.4 8.4 0 1 0 3.7 14.2A6.8 6.8 0 1 1 15.8 4.2Z" />
+            </svg>
+          </span>
+          <span>
+            <span class="brand-name">LYLY ARCTURUS</span><br />
+            <span class="brand-sub">T A R O T</span>
+          </span>
+        </a>
+
+        <div class="nav-links" id="navLinks">
+          <a href="#home">Trang chủ</a>
+          <a href="#draw">Rút bài</a>
+          <a href="#about">Về Lyly</a>
+          <a href="#services">Dịch vụ</a>
+          <a href="#gallery">Thư viện</a>
+          <a href="#faq">FAQ</a>
+          <a class="mobile-only" href="#booking">✦ Đặt lịch trải bài</a>
+        </div>
+
+        <div class="nav-actions">
+          <button
+            class="theme-toggle"
+            id="themeToggle"
+            type="button"
+            aria-label="Chuyển sang giao diện sáng"
+            aria-pressed="false"
+            title="Chuyển sáng/tối"
+          >
+            <span class="theme-icon" id="themeIcon" aria-hidden="true"></span>
+            <span class="theme-label" id="themeLabel">Sáng</span>
+          </button>
+          <a class="btn small" href="#booking">Đặt lịch ✦</a>
+        </div>
+
+        <button class="menu-toggle" id="menuToggle" type="button" aria-label="Mở menu" aria-expanded="false">
+          ☰
+        </button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" id="home">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <div class="eyebrow">✧ a sanctuary for your soul ✧</div>
+            <h1>LYLY<br /><span class="gold">ARCTURUS</span><br />TAROT</h1>
+            <p class="lead">
+              Một chút Tarot, một khoảng lặng dành cho bạn. Cùng Lyly lắng nghe những điều chưa nói, khám phá cảm xúc và
+              tìm thấy góc nhìn mới qua từng lá bài.
+            </p>
+            <div class="hero-actions">
+              <a href="#booking" class="btn">✦ Đặt lịch trải bài</a>
+              <a href="#draw" class="btn ghost">Rút bài miễn phí ↗</a>
+            </div>
+            <div class="hero-note">☽ TAROT • LẮNG NGHE • CHIÊM NGHIỆM ☾</div>
+          </div>
+
+          <div class="hero-visual" id="heroVisual" aria-hidden="true">
+            <div class="halo"></div>
+            <div class="floating-card a js-tilt"></div>
+            <div class="floating-card b js-tilt"></div>
+            <div class="floating-card c js-tilt"></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="rule"></div>
+
+      <section class="zodiac">
+        <div class="container">
+          <div class="eyebrow section-label">CELESTIAL INSPIRATION</div>
+          <div class="zodiac-row" id="zodiacRow"></div>
+          <p class="zodiac-caption" id="zodiacCaption">
+            Chọn một cung hoàng đạo để khám phá lời nhắn chiêm nghiệm hôm nay ✧
+          </p>
+        </div>
+      </section>
+
+      <section class="section reveal" id="draw">
+        <div class="container draw-area">
+          <div class="eyebrow section-label">A MESSAGE FROM THE CARDS</div>
+          <h2 class="section-heading">CHỌN MỘT LÁ BÀI</h2>
+          <p class="section-intro">
+            Hãy dành một nhịp thở sâu, nghĩ về điều bạn muốn chiêm nghiệm. Sau đó chạm vào lá bài khiến bạn chú ý nhất
+            để lật mở thông điệp của mình.
+          </p>
+          <div class="cards-stage" id="cardStage"></div>
+          <div class="draw-controls">
+            <button class="btn" id="drawBtn" type="button">✦ Lật lá bài đã chọn</button>
+            <button class="btn ghost" id="shuffleBtn" type="button">↻ Xáo bài &amp; rút lại</button>
+          </div>
+          <div class="draw-outcome" id="drawOutcome" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <div class="rule"></div>
+
+      <section class="section reveal" id="about">
+        <div class="container about-grid">
+          <div class="about-art">
+            <svg class="about-moon-svg" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+              <circle cx="100" cy="100" r="82" stroke="currentColor" stroke-width="0.8" stroke-dasharray="4 6" opacity="0.5" />
+              <path
+                d="M118 38a62 62 0 1 0 38 110 50 50 0 1 1-38-110Z"
+                fill="currentColor"
+                opacity="0.92"
+              />
+              <path
+                d="M144 54l4 10 10 4-10 4-4 10-4-10-10-4 10-4 4-10Z"
+                fill="currentColor"
+              />
+            </svg>
+            <div class="portrait-caption">
+              LYLY ARCTURUS
+              <small>MEET YOUR TAROT READER</small>
+            </div>
+          </div>
+
+          <div class="about-copy">
+            <div class="eyebrow">THE PERSON BEHIND THE CARDS</div>
+            <h2>WHO IS <span class="gold">LYLY?</span></h2>
+            <p>
+              Chào bạn, Lyly đây! Đây là một góc nhỏ dành cho những cuộc trò chuyện chân thành và những phút giây lắng
+              nghe chính mình.
+            </p>
+            <p>
+              Với Lyly, Tarot là một công cụ gợi mở góc nhìn, giúp bạn chiêm nghiệm cảm xúc, nhìn lại những lựa chọn và
+              tìm thấy câu hỏi phù hợp cho hành trình của mình.
+            </p>
+            <p>
+              Lyly không quyết định thay bạn. Mỗi buổi trải bài là một cuộc trò chuyện riêng tư, tôn trọng và không phán
+              xét.
+            </p>
+            <div class="signature">Thương mến, Lyly ♡</div>
+            <a class="btn ghost" href="#booking">Cùng Lyly trò chuyện ↗</a>
+            <p class="about-placeholder-note">
+              Ảnh đại diện hiện là minh họa nghệ thuật; có thể thay bằng ảnh Reader khi bạn sẵn sàng.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section services reveal" id="services">
+        <div class="container">
+          <div class="eyebrow section-label">THE TAROT EXPERIENCE</div>
+          <h2 class="section-heading">DỊCH VỤ TRẢI BÀI</h2>
+          <p class="section-intro">
+            Chọn một chủ đề phù hợp với điều bạn đang băn khoăn. Lyly sẽ đồng hành qua buổi trải bài trực tiếp bằng chat
+            Zalo.
+          </p>
+          <div class="service-grid" id="serviceGrid"></div>
+
+          <div class="eyebrow section-label" style="margin-top: 72px">CHOOSE YOUR MOMENT</div>
+          <h2 class="section-heading pricing-title">CHỌN THỜI LƯỢNG</h2>
+          <div class="prices" id="pricingGrid"></div>
+          <p class="price-note" id="priceNote"></p>
+        </div>
+      </section>
+
+      <section class="section reveal" id="booking">
+        <div class="container booking-grid">
+          <div class="booking-aside">
+            <div class="eyebrow">RESERVE YOUR SPACE</div>
+            <h2>ĐẶT LỊCH<br /><span class="gold">CÙNG LYLY</span></h2>
+            <p class="muted">Một cuộc trò chuyện dành riêng cho bạn, vào thời gian bạn cảm thấy thoải mái.</p>
+            <ul class="steps">
+              <li><span class="num">01</span><span>Chọn chủ đề và thời lượng trải bài</span></li>
+              <li><span class="num">02</span><span>Chọn ngày và khung giờ bạn muốn gặp Lyly</span></li>
+              <li><span class="num">03</span><span>Điền thông tin liên hệ Zalo và câu hỏi</span></li>
+              <li><span class="num">04</span><span>Xác nhận thông tin &amp; gửi nhanh qua Zalo</span></li>
+            </ul>
+            <div class="notice" id="bookingNotice"></div>
+          </div>
+
+          <div class="booking-box">
+            <h3>THÔNG TIN BUỔI TRẢI BÀI</h3>
+            <form id="bookingForm">
+              <div class="field">
+                <label for="service">Chủ đề trải bài</label>
+                <select id="service">
+                  <option value="Tình yêu">Tình yêu &amp; Kết nối</option>
+                  <option value="Sự nghiệp">Sự nghiệp &amp; Học tập</option>
+                  <option value="Khám phá bản thân">Khám phá bản thân</option>
+                  <option value="Tổng quan">Tổng quan</option>
+                  <option value="Theo yêu cầu">Theo yêu cầu</option>
+                </select>
+              </div>
+
+              <div class="two">
+                <div class="field">
+                  <label for="duration">Thời lượng</label>
+                  <select id="duration">
+                    <option value="15">Mini — 15 phút (59K)</option>
+                    <option value="30" selected>Insight — 30 phút (109K)</option>
+                    <option value="60">Deep Dive — 60 phút (199K)</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="date">Ngày mong muốn</label>
+                  <input type="date" id="date" required />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="time">Khung giờ mong muốn</label>
+                <select id="time">
+                  <option value="19:00">19:00</option>
+                  <option value="20:00">20:00</option>
+                  <option value="21:00">21:00</option>
+                </select>
+              </div>
+
+              <div class="two">
+                <div class="field">
+                  <label for="name">Tên hoặc biệt danh *</label>
+                  <input id="name" placeholder="Lyly nên gọi bạn là gì?" required />
+                </div>
+                <div class="field">
+                  <label for="zalo">Liên hệ Zalo *</label>
+                  <input id="zalo" placeholder="Số Zalo của bạn" required />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="email">Email nhận lịch (tùy chọn)</label>
+                <input id="email" type="email" placeholder="ban@example.com" />
+              </div>
+
+              <div class="field">
+                <label for="question">Câu hỏi hoặc điều bạn băn khoăn *</label>
+                <textarea id="question" placeholder="Bạn có thể chia sẻ ngắn gọn tại đây..." required></textarea>
+              </div>
+
+              <div class="field">
+                <label for="age">Xác nhận độ tuổi *</label>
+                <select id="age" required>
+                  <option value="">Chọn độ tuổi</option>
+                  <option value="16-17">Từ 16 đến dưới 18 tuổi</option>
+                  <option value="18+">Từ 18 tuổi trở lên</option>
+                </select>
+              </div>
+
+              <label class="terms-label">
+                <input type="checkbox" id="terms" required />
+                <span>
+                  Tôi hiểu Tarot là công cụ gợi mở góc nhìn và chiêm nghiệm, không thay thế tư vấn y tế, tâm lý, pháp lý
+                  hoặc tài chính chuyên môn.
+                </span>
+              </label>
+
+              <button class="btn" style="width: 100%" type="submit">Xác nhận thông tin đặt lịch ✦</button>
+              <div class="success" id="success" role="status" aria-live="polite"></div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="gallery">
+        <div class="container">
+          <div class="eyebrow section-label">THE TAROT UNIVERSE</div>
+          <h2 class="section-heading">THƯ VIỆN TAROT</h2>
+          <p class="section-intro">
+            Một góc nhỏ dành cho những hình tượng, biểu tượng và câu chuyện phía sau các lá bài. Chạm vào từng lá bài để
+            lật xem mặt trước.
+          </p>
+          <div class="gallery-row" id="galleryRow"></div>
+        </div>
+      </section>
+
+      <section class="section reveal" style="padding-top: 24px">
+        <div class="container">
+          <div class="eyebrow section-label">KIND WORDS</div>
+          <h2 class="section-heading">NHỮNG LỜI CHIA SẺ</h2>
+          <div class="review-placeholder">
+            <div class="quote">“</div>
+            <p>
+              Khi Lyly nhận được đánh giá thật và có sự đồng ý công khai từ khách hàng, những lời chia sẻ sẽ xuất hiện ở
+              đây.
+            </p>
+            <small>Không hiển thị đánh giá giả — chỉ lưu giữ những cảm nhận chân thật.</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="faq">
+        <div class="container">
+          <div class="eyebrow section-label">BEFORE WE BEGIN</div>
+          <h2 class="section-heading">CÂU HỎI THƯỜNG GẶP</h2>
+          <div class="faq-list" id="faqList"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M15.8 4.2a8.4 8.4 0 1 0 3.7 14.2A6.8 6.8 0 1 1 15.8 4.2Z" />
+            </svg>
+          </span>
+          <span>
+            <span class="brand-name">LYLY ARCTURUS</span><br />
+            <span class="brand-sub">T A R O T</span>
+          </span>
+        </div>
+        <p>Một chút Tarot, một khoảng lặng dành cho bạn.</p>
+        <div class="footer-links">
+          <a href="#home">Trang chủ</a>
+          <a href="#services">Dịch vụ</a>
+          <a href="#draw">Rút bài</a>
+          <a href="#booking">Đặt lịch</a>
+          <a href="#faq">FAQ</a>
+        </div>
+        <p class="fine">© <span id="year"></span> Lyly Arcturus Tarot · Celestial Edition</p>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

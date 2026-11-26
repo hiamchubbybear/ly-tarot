@@ -1,0 +1,250 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font: 400 15px/1.7 var(--font-sans);
+  overflow-x: hidden;
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -2;
+  background: var(--body-aura);
+}
+
+#celestialCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+header,
+main,
+footer {
+  position: relative;
+  z-index: 1;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+.serif {
+  font-family: var(--font-serif);
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  font-size: clamp(54px, 7.2vw, 108px);
+  font-weight: 500;
+  line-height: 0.94;
+  letter-spacing: 0.03em;
+}
+
+h2 {
+  font-size: clamp(38px, 5.4vw, 72px);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: 0.02em;
+}
+
+h3 {
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.container {
+  width: min(1160px, calc(100% - 48px));
+  margin-inline: auto;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--text-accent);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+.gold {
+  color: var(--text-heading);
+}
+
+.section {
+  padding: 104px 0;
+}
+
+.section-label {
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.section-heading {
+  text-align: center;
+  color: var(--text-heading);
+  margin-bottom: 18px;
+}
+
+.section-intro {
+  text-align: center;
+  max-width: 610px;
+  color: var(--text-secondary);
+  margin: 0 auto 48px;
+}
+
+.rule {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-card), transparent);
+  margin: 0;
+}
+
+/* Buttons */
+.btn {
+  border: 1px solid var(--border-strong);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 12px 26px;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, opacity 0.25s ease;
+  box-shadow: var(--btn-shadow);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--btn-shadow-hover);
+}
+
+.btn:disabled {
+  opacity: 0.62;
+  cursor: default;
+}
+
+.btn.ghost {
+  background: var(--btn-ghost-bg);
+  color: var(--text-accent-strong);
+  box-shadow: none;
+  backdrop-filter: blur(8px);
+}
+
+.btn.ghost:hover:not(:disabled) {
+  background: var(--btn-ghost-hover);
+}
+
+.btn.small {
+  min-height: 38px;
+  padding: 8px 16px;
+}
+
+/* Subtle scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Shared Tarot SVG card surfaces + holographic foil sheen */
+.tarot-back,
+.tarot-front {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+}
+
+.tarot-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.card-foil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(
+    circle 150px at var(--foil-x, 50%) var(--foil-y, 50%),
+    rgba(255, 242, 200, 0.34),
+    rgba(213, 160, 187, 0.14) 45%,
+    transparent 75%
+  );
+  mix-blend-mode: screen;
+}
+
+.is-tilting .card-foil,
+.pick-card.selected .card-foil {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
