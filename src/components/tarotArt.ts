@@ -1,41 +1,47 @@
 import type { TarotCard } from '../data/tarotCards';
 
+let svgInstanceCounter = 0;
+
 /**
  * Crisp inline SVG artwork for the midnight-blue & gold Tarot card back.
- * Renders identically across iOS, Android, macOS, and Windows (no emoji fallback).
+ * Generates unique gradient IDs per instance to avoid duplicate DOM IDs.
  */
 export function renderTarotBackMarkup(): string {
+  const uid = ++svgInstanceCounter;
+  const bgId = `tbBg-${uid}`;
+  const goldId = `tbGold-${uid}`;
+
   return `
     <div class="tarot-back" aria-hidden="true">
       <svg class="tarot-svg" viewBox="0 0 220 330" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <radialGradient id="tbBg" cx="50%" cy="48%" r="65%">
+          <radialGradient id="${bgId}" cx="50%" cy="48%" r="65%">
             <stop offset="0%" stop-color="#29486b"/>
             <stop offset="45%" stop-color="#14294a"/>
             <stop offset="100%" stop-color="#091026"/>
           </radialGradient>
-          <linearGradient id="tbGold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="${goldId}" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stop-color="#f7e7b9"/>
             <stop offset="50%" stop-color="#ddc38a"/>
             <stop offset="100%" stop-color="#b49154"/>
           </linearGradient>
         </defs>
-        <rect x="0" y="0" width="220" height="330" rx="10" fill="url(#tbBg)"/>
+        <rect x="0" y="0" width="220" height="330" rx="10" fill="url(#${bgId})"/>
         <!-- Outer & inner filigree borders -->
-        <rect x="8" y="8" width="204" height="314" rx="6" stroke="url(#tbGold)" stroke-width="1.2" opacity="0.9"/>
-        <rect x="15" y="15" width="190" height="300" rx="4" stroke="url(#tbGold)" stroke-width="0.7" opacity="0.55"/>
+        <rect x="8" y="8" width="204" height="314" rx="6" stroke="url(#${goldId})" stroke-width="1.2" opacity="0.9"/>
+        <rect x="15" y="15" width="190" height="300" rx="4" stroke="url(#${goldId})" stroke-width="0.7" opacity="0.55"/>
         <!-- Celestial oval frame -->
-        <ellipse cx="110" cy="165" rx="74" ry="122" stroke="url(#tbGold)" stroke-width="0.9" opacity="0.65"/>
-        <ellipse cx="110" cy="165" rx="66" ry="114" stroke="url(#tbGold)" stroke-width="0.45" stroke-dasharray="3 4" opacity="0.45"/>
+        <ellipse cx="110" cy="165" rx="74" ry="122" stroke="url(#${goldId})" stroke-width="0.9" opacity="0.65"/>
+        <ellipse cx="110" cy="165" rx="66" ry="114" stroke="url(#${goldId})" stroke-width="0.45" stroke-dasharray="3 4" opacity="0.45"/>
         <!-- Corner diamonds -->
         <path d="M24 24l3 4-3 4-3-4 3-4ZM196 24l3 4-3 4-3-4 3-4ZM24 298l3 4-3 4-3-4 3-4ZM196 298l3 4-3 4-3-4 3-4Z" fill="#e6ce91" opacity="0.8"/>
         <!-- Top crescent & stars -->
-        <path d="M114 54a11 11 0 1 0 7.2 19.2 9 9 0 1 1-7.2-19.2Z" fill="url(#tbGold)"/>
+        <path d="M114 54a11 11 0 1 0 7.2 19.2 9 9 0 1 1-7.2-19.2Z" fill="url(#${goldId})"/>
         <path d="M84 62l1.8 4 4 1.8-4 1.8-1.8 4-1.8-4-4-1.8 4-1.8 1.8-4ZM136 62l1.8 4 4 1.8-4 1.8-1.8 4-1.8-4-4-1.8 4-1.8 1.8-4Z" fill="#f3e1b2" opacity="0.85"/>
         <!-- Central radiant sun / Arcturus star -->
-        <circle cx="110" cy="165" r="44" stroke="url(#tbGold)" stroke-width="1.1" opacity="0.85"/>
-        <circle cx="110" cy="165" r="52" stroke="url(#tbGold)" stroke-width="0.5" opacity="0.4"/>
-        <g stroke="url(#tbGold)" stroke-width="1" stroke-linecap="round" opacity="0.9">
+        <circle cx="110" cy="165" r="44" stroke="url(#${goldId})" stroke-width="1.1" opacity="0.85"/>
+        <circle cx="110" cy="165" r="52" stroke="url(#${goldId})" stroke-width="0.5" opacity="0.4"/>
+        <g stroke="url(#${goldId})" stroke-width="1" stroke-linecap="round" opacity="0.9">
           <line x1="110" y1="127" x2="110" y2="141"/>
           <line x1="110" y1="189" x2="110" y2="203"/>
           <line x1="72" y1="165" x2="86" y2="165"/>
@@ -45,7 +51,7 @@ export function renderTarotBackMarkup(): string {
           <line x1="137" y1="138" x2="127" y2="148"/>
           <line x1="93" y1="182" x2="83" y2="192"/>
         </g>
-        <path d="M110 138l6 21 21 6-21 6-6 21-6-21-21-6 21-6 6-21Z" fill="url(#tbGold)" opacity="0.95"/>
+        <path d="M110 138l6 21 21 6-21 6-6 21-6-21-21-6 21-6 6-21Z" fill="url(#${goldId})" opacity="0.95"/>
         <circle cx="110" cy="165" r="6" fill="#0e1b35" stroke="#f7e7b9" stroke-width="1"/>
         <!-- Bottom constellation -->
         <circle cx="90" cy="264" r="1.8" fill="#f3e1b2"/>
@@ -150,17 +156,20 @@ function getEmblemSvg(emblem: TarotCard['emblem']): string {
  * Illustrated SVG front face for a revealed Major Arcana card.
  */
 export function renderTarotFrontMarkup(card: TarotCard): string {
+  const uid = ++svgInstanceCounter;
+  const frontBgId = `tfBg-${card.id}-${uid}`;
+
   return `
     <div class="tarot-front" style="--card-accent:${card.accent}">
       <svg class="tarot-svg" viewBox="0 0 220 330" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <radialGradient id="tfBg-${card.id}" cx="50%" cy="42%" r="68%">
+          <radialGradient id="${frontBgId}" cx="50%" cy="42%" r="68%">
             <stop offset="0%" stop-color="#2c2444"/>
             <stop offset="55%" stop-color="#17162a"/>
             <stop offset="100%" stop-color="#0d0d16"/>
           </radialGradient>
         </defs>
-        <rect x="0" y="0" width="220" height="330" rx="10" fill="url(#tfBg-${card.id})"/>
+        <rect x="0" y="0" width="220" height="330" rx="10" fill="url(#${frontBgId})"/>
         <rect x="8" y="8" width="204" height="314" rx="6" stroke="${card.accent}" stroke-width="1.3" opacity="0.9"/>
         <path d="M26 254V92a84 84 0 0 1 168 0v162H26Z" stroke="${card.accent}" stroke-width="0.9" opacity="0.45"/>
         <text x="110" y="42" text-anchor="middle" fill="${card.accent}" font-family="'Cormorant Garamond', Georgia, serif" font-size="18" letter-spacing="4" font-weight="600">${card.numeral}</text>

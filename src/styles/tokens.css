@@ -25,9 +25,18 @@
 
   --border-subtle: rgba(181, 151, 98, 0.24);
   --border-card: rgba(164, 138, 92, 0.42);
-  --border-strong: rgba(221, 195, 138, 0.72);
+  --border-strong: rgba(221, 195, 138, 0.78);
   --border-input: rgba(134, 117, 94, 0.55);
   --border-success: #6a9b7c;
+  --border-error: #e37d8b;
+  --text-error: #f8b4be;
+  --bg-error: rgba(120, 36, 48, 0.24);
+  --focus-ring: 0 0 0 3px rgba(221, 195, 138, 0.42);
+  --card-inner-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  --radius-pill: 999px;
+  --radius-card: 16px;
+  --radius-input: 10px;
 
   --btn-bg: linear-gradient(135deg, #f7e7b9, #c9a96b);
   --btn-text: #1b1714;
@@ -68,26 +77,31 @@ html[data-theme='light'] {
   --bg-success: rgba(229, 244, 236, 0.96);
 
   --text-primary: #2b2530;
-  --text-secondary: #584e5d;
-  --text-muted: #706474;
-  --text-heading: #5f422b;
-  --text-accent: #865f39;
-  --text-accent-strong: #6b4929;
-  --text-pink: #9c5580;
-  --text-success: #23533a;
+  --text-secondary: #4a4050;
+  --text-muted: #64586a;
+  --text-heading: #543721;
+  --text-accent: #7a542f;
+  --text-accent-strong: #54371c;
+  --text-pink: #8f4772;
+  --text-success: #1f4d35;
 
-  --border-subtle: rgba(190, 165, 132, 0.36);
-  --border-card: rgba(196, 174, 146, 0.62);
-  --border-strong: rgba(154, 118, 74, 0.72);
-  --border-input: #cdbba6;
-  --border-success: #7ea88e;
+  --border-subtle: rgba(176, 148, 112, 0.38);
+  --border-card: rgba(182, 156, 124, 0.65);
+  --border-strong: rgba(138, 102, 58, 0.76);
+  --border-input: #bfa990;
+  --border-success: #6a997b;
+  --border-error: #c23f54;
+  --text-error: #a62b40;
+  --bg-error: rgba(194, 63, 84, 0.08);
+  --focus-ring: 0 0 0 3px rgba(138, 102, 58, 0.32);
+  --card-inner-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.72);
 
   --btn-bg: linear-gradient(135deg, #edd6a0, #c49b5c);
   --btn-text: #1f1914;
   --btn-shadow: 0 6px 24px rgba(162, 128, 76, 0.24);
   --btn-shadow-hover: 0 10px 30px rgba(162, 128, 76, 0.38);
-  --btn-ghost-bg: rgba(255, 249, 241, 0.72);
-  --btn-ghost-hover: rgba(242, 228, 206, 0.92);
+  --btn-ghost-bg: rgba(255, 251, 245, 0.88);
+  --btn-ghost-hover: rgba(242, 228, 206, 0.96);
 
   --halo-border: rgba(175, 135, 172, 0.42);
   --halo-glow: radial-gradient(circle, rgba(176, 152, 214, 0.34), transparent 68%);

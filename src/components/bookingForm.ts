@@ -13,19 +13,62 @@ function escapeHtml(value: string): string {
   });
 }
 
-function getDurationLabel(minutes: string): string {
-  if (minutes === '15') return 'Mini — 15 phút (59K)';
-  if (minutes === '60') return 'Deep Dive — 60 phút (199K)';
-  return 'Insight — 30 phút (109K)';
+function getDurationMeta(minutes: string): { label: string; price: string; short: string } {
+  if (minutes === '15') return { label: 'Mini — 15 phút (59K)', price: '59K', short: 'Mini · 15 phút' };
+  if (minutes === '60') return { label: 'Deep Dive — 60 phút (199K)', price: '199K', short: 'Deep Dive · 60 phút' };
+  return { label: 'Insight — 30 phút (109K)', price: '109K', short: 'Insight · 30 phút' };
+}
+
+function formatDateVi(iso: string): string {
+  if (!iso) return 'Chưa chọn ngày';
+  const parts = iso.split('-');
+  if (parts.length !== 3) return iso;
+  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
+
+function isValidZalo(value: string): boolean {
+  const digits = value.replace(/[\s.-]/g, '');
+  if (/^(\+?84|0)\d{8,10}$/.test(digits)) return true;
+  return value.trim().length >= 3 && !/^\d+$/.test(value.trim());
+}
+
+function isValidEmail(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
 export function initBookingForm(): void {
   const form = document.getElementById('bookingForm') as HTMLFormElement | null;
+  const serviceSelect = document.getElementById('service') as HTMLSelectElement | null;
+  const durationSelect = document.getElementById('duration') as HTMLSelectElement | null;
   const dateInput = document.getElementById('date') as HTMLInputElement | null;
+  const timeInput = document.getElementById('time') as HTMLInputElement | null;
+  const timePills = document.querySelectorAll<HTMLButtonElement>('#timeSlots .time-pill');
+  const nameInput = document.getElementById('name') as HTMLInputElement | null;
+  const zaloInput = document.getElementById('zalo') as HTMLInputElement | null;
+  const emailInput = document.getElementById('email') as HTMLInputElement | null;
+  const questionInput = document.getElementById('question') as HTMLTextAreaElement | null;
+  const ageSelect = document.getElementById('age') as HTMLSelectElement | null;
+  const termsCheckbox = document.getElementById('terms') as HTMLInputElement | null;
+  const summaryBar = document.getElementById('bookingSummaryBar');
   const successBox = document.getElementById('success');
   const noticeBox = document.getElementById('bookingNotice');
 
-  if (!form || !dateInput || !successBox) return;
+  if (
+    !form ||
+    !serviceSelect ||
+    !durationSelect ||
+    !dateInput ||
+    !timeInput ||
+    !nameInput ||
+    !zaloInput ||
+    !emailInput ||
+    !questionInput ||
+    !ageSelect ||
+    !termsCheckbox ||
+    !successBox
+  ) {
+    return;
+  }
 
   // Set default & min date to local today
   const now = new Date();
@@ -35,35 +78,154 @@ export function initBookingForm(): void {
   dateInput.min = localIso;
   dateInput.value = localIso;
 
-  // Update notice copy depending on whether real Zalo/endpoint is configured
+  // Warm user-facing guidance about Zalo confirmation & privacy
   if (noticeBox) {
-    if (SITE_CONFIG.zaloPhone || SITE_CONFIG.formEndpoint) {
-      noticeBox.innerHTML = `
-        <strong>✧ QUY TRÌNH XÁC NHẬN</strong><br>
-        Sau khi gửi thông tin, bạn có thể chuyển nhanh nội dung đặt lịch qua Zalo để Lyly xác nhận khung giờ trống và hướng dẫn tham gia buổi xem.
-      `;
-    } else {
-      noticeBox.innerHTML = `
-        <strong>✧ SẴN SÀNG KẾT NỐI ZALO / FORM</strong><br>
-        Điền thông tin để tạo bản tóm tắt đặt lịch (có thể sao chép gửi Zalo ngay). Khi gắn số Zalo hoặc Formspree trong <code>src/data/config.ts</code>, hệ thống sẽ tự động gửi lịch trực tiếp cho Lyly.
-      `;
-    }
+    noticeBox.innerHTML = `
+      <strong>✧ XÁC NHẬN &amp; BẢO MẬT RIÊNG TƯ</strong><br>
+      Sau khi hoàn tất biểu mẫu, bạn sẽ nhận ngay bản tóm tắt lịch hẹn để gửi qua Zalo cho Lyly xác nhận khung giờ
+      trống. Mọi câu chuyện và thông tin cá nhân của bạn luôn được giữ kín tuyệt đối.
+    `;
   }
+
+  const updateSummaryBar = (): void => {
+    if (!summaryBar) return;
+    const meta = getDurationMeta(durationSelect.value);
+    const serviceVal = serviceSelect.value;
+    const dateVal = formatDateVi(dateInput.value);
+    const timeVal = timeInput.value || '19:00';
+
+    summaryBar.innerHTML = `
+      <div class="summary-bar-left">
+        <span class="summary-bar-label">Tóm tắt buổi xem</span>
+        <strong>${escapeHtml(serviceVal)} · ${escapeHtml(meta.short)}</strong>
+        <span class="summary-bar-time">${escapeHtml(timeVal)} · ${escapeHtml(dateVal)}</span>
+      </div>
+      <div class="summary-bar-price">${escapeHtml(meta.price)}</div>
+    `;
+  };
+
+  const setFieldError = (fieldId: string, control: HTMLElement | null, message: string): void => {
+    const errorEl = document.getElementById(`${fieldId}-error`);
+    if (errorEl) errorEl.textContent = message;
+    if (control) {
+      control.setAttribute('aria-invalid', message ? 'true' : 'false');
+      control.closest('.field')?.classList.toggle('has-error', Boolean(message));
+    }
+  };
+
+  // Interactive time-slot pills
+  timePills.forEach((pill) => {
+    pill.addEventListener('click', () => {
+      const selectedTime = pill.dataset.time ?? '19:00';
+      timeInput.value = selectedTime;
+      timePills.forEach((p) => {
+        const active = p === pill;
+        p.classList.toggle('active', active);
+        p.setAttribute('aria-pressed', String(active));
+      });
+      updateSummaryBar();
+    });
+  });
+
+  // Live summary bar updates
+  serviceSelect.addEventListener('change', updateSummaryBar);
+  durationSelect.addEventListener('change', updateSummaryBar);
+  dateInput.addEventListener('change', () => {
+    setFieldError('date', dateInput, '');
+    updateSummaryBar();
+  });
+
+  // Clear inline errors on user input
+  nameInput.addEventListener('input', () => setFieldError('name', nameInput, ''));
+  zaloInput.addEventListener('input', () => setFieldError('zalo', zaloInput, ''));
+  emailInput.addEventListener('input', () => setFieldError('email', emailInput, ''));
+  questionInput.addEventListener('input', () => setFieldError('question', questionInput, ''));
+  ageSelect.addEventListener('change', () => setFieldError('age', ageSelect, ''));
+  termsCheckbox.addEventListener('change', () => setFieldError('terms', termsCheckbox, ''));
+
+  updateSummaryBar();
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const service = (document.getElementById('service') as HTMLSelectElement).value;
-    const duration = (document.getElementById('duration') as HTMLSelectElement).value;
+    const service = serviceSelect.value;
+    const duration = durationSelect.value;
+    const durationMeta = getDurationMeta(duration);
     const date = dateInput.value;
-    const time = (document.getElementById('time') as HTMLSelectElement).value;
-    const name = (document.getElementById('name') as HTMLInputElement).value.trim();
-    const zalo = (document.getElementById('zalo') as HTMLInputElement).value.trim();
-    const email = (document.getElementById('email') as HTMLInputElement).value.trim();
-    const question = (document.getElementById('question') as HTMLTextAreaElement).value.trim();
-    const age = (document.getElementById('age') as HTMLSelectElement).value;
+    const time = timeInput.value || '19:00';
+    const name = nameInput.value.trim();
+    const zalo = zaloInput.value.trim();
+    const email = emailInput.value.trim();
+    const question = questionInput.value.trim();
+    const age = ageSelect.value;
+    const termsAccepted = termsCheckbox.checked;
 
-    if (!name || !zalo || !question || !age) return;
+    let firstInvalid: HTMLElement | null = null;
+    const recordInvalid = (el: HTMLElement) => {
+      if (!firstInvalid) firstInvalid = el;
+    };
+
+    if (!date) {
+      setFieldError('date', dateInput, 'Vui lòng chọn ngày bạn muốn trải bài.');
+      recordInvalid(dateInput);
+    } else {
+      setFieldError('date', dateInput, '');
+    }
+
+    if (name.length < 2) {
+      setFieldError('name', nameInput, 'Vui lòng nhập tên hoặc biệt danh (ít nhất 2 ký tự).');
+      recordInvalid(nameInput);
+    } else {
+      setFieldError('name', nameInput, '');
+    }
+
+    if (!isValidZalo(zalo)) {
+      setFieldError(
+        'zalo',
+        zaloInput,
+        'Vui lòng nhập số điện thoại Zalo hợp lệ (9–11 số) hoặc tên tài khoản Zalo.'
+      );
+      recordInvalid(zaloInput);
+    } else {
+      setFieldError('zalo', zaloInput, '');
+    }
+
+    if (email && !isValidEmail(email)) {
+      setFieldError('email', emailInput, 'Email chưa đúng định dạng (ví dụ: ban@example.com).');
+      recordInvalid(emailInput);
+    } else {
+      setFieldError('email', emailInput, '');
+    }
+
+    if (question.length < 10) {
+      setFieldError(
+        'question',
+        questionInput,
+        'Vui lòng chia sẻ ngắn gọn câu hỏi hoặc điều bạn băn khoăn (ít nhất 10 ký tự).'
+      );
+      recordInvalid(questionInput);
+    } else {
+      setFieldError('question', questionInput, '');
+    }
+
+    if (!age) {
+      setFieldError('age', ageSelect, 'Vui lòng xác nhận độ tuổi của bạn.');
+      recordInvalid(ageSelect);
+    } else {
+      setFieldError('age', ageSelect, '');
+    }
+
+    if (!termsAccepted) {
+      setFieldError('terms', termsCheckbox, 'Vui lòng xác nhận bạn đã đọc lưu ý trước khi đặt lịch.');
+      recordInvalid(termsCheckbox);
+    } else {
+      setFieldError('terms', termsCheckbox, '');
+    }
+
+    if (firstInvalid) {
+      (firstInvalid as HTMLElement).focus();
+      return;
+    }
 
     const summaryText = [
       '✦ ĐẶT LỊCH TRẢI BÀI — LYLY ARCTURUS TAROT',
@@ -71,8 +233,8 @@ export function initBookingForm(): void {
       `• Zalo liên hệ: ${zalo}`,
       email ? `• Email: ${email}` : null,
       `• Chủ đề: ${service}`,
-      `• Gói: ${getDurationLabel(duration)}`,
-      `• Thời gian mong muốn: ${time}, ngày ${date}`,
+      `• Gói: ${durationMeta.label}`,
+      `• Thời gian mong muốn: ${time}, ngày ${formatDateVi(date)}`,
       `• Câu hỏi: ${question}`,
     ]
       .filter(Boolean)
@@ -92,7 +254,7 @@ export function initBookingForm(): void {
           zalo,
           email,
           service,
-          duration: getDurationLabel(duration),
+          duration: durationMeta.label,
           date,
           time,
           age,
@@ -130,8 +292,8 @@ export function initBookingForm(): void {
       <div class="success-header">✦ Tóm tắt lịch hẹn của ${escapeHtml(name)}</div>
       ${webhookStatus}
       <p class="success-meta">
-        <strong>${escapeHtml(service)}</strong> · ${escapeHtml(getDurationLabel(duration))}<br>
-        Ngày <strong>${escapeHtml(date)}</strong> lúc <strong>${escapeHtml(time)}</strong> · Zalo: <strong>${escapeHtml(zalo)}</strong>
+        <strong>${escapeHtml(service)}</strong> · ${escapeHtml(durationMeta.label)}<br>
+        Ngày <strong>${escapeHtml(formatDateVi(date))}</strong> lúc <strong>${escapeHtml(time)}</strong> · Zalo: <strong>${escapeHtml(zalo)}</strong>
       </p>
       <div class="success-actions">
         <button type="button" class="btn ghost small" id="copySummaryBtn">Sao chép nội dung gửi Zalo</button>
